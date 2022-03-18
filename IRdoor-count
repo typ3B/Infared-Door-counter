@@ -1,0 +1,68 @@
+#include <TM1637Display.h>
+
+#define CLK 7
+#define DIO 8
+
+TM1637Display display = TM1637Display(CLK, DIO);
+
+// Create array that turns all segments on:
+const uint8_t data[] = {0xff, 0xff, 0xff, 0xff};
+
+// Create array that turns all segments off:
+const uint8_t blank[] = {0x00, 0x00, 0x00, 0x00};
+
+// You can set the individual segments per digit to spell words or create other symbols:
+const uint8_t done[] = {
+  SEG_B | SEG_C | SEG_D | SEG_E | SEG_G,           // d
+  SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F,   // O
+  SEG_C | SEG_E | SEG_G,                           // n
+  SEG_A | SEG_D | SEG_E | SEG_F | SEG_G            // E
+};
+
+// Create degree Celsius symbol:
+const uint8_t celsius[] = {
+  SEG_A | SEG_B | SEG_F | SEG_G,  // Circle
+  SEG_A | SEG_D | SEG_E | SEG_F   // C
+};
+
+int IRSensor = 2; // connect ir sensor to arduino pin 2
+//int LED = 13; // conect Led to arduino pin 13
+int count_value =0;
+int prestate =0;
+
+
+void setup() 
+{
+   // Set the brightness:
+  display.setBrightness(7);
+  // All segments on:
+  display.setSegments(data);
+// Clear the display:
+  display.clear();
+  delay(1000);
+  display.showNumberDec(count_value);
+
+
+  pinMode (IRSensor, INPUT); // sensor pin INPUT
+  //pinMode (LED, OUTPUT); // Led pin OUTPUT
+}
+
+void loop() {
+
+
+  int statusSensor = digitalRead (IRSensor);
+  
+  if (statusSensor == LOW && prestate == 0) {
+     count_value++;
+    //digitalWrite(LED, LOW); // LED LOW
+    display.showNumberDec(count_value);
+    prestate = 0;
+    delay(800);
+  }
+  
+  /*else
+  {
+    digitalWrite(LED, HIGH); // LED High
+  }*/
+  
+}
